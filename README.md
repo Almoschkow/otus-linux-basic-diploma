@@ -13,6 +13,14 @@
 [![Grafana](https://img.shields.io/badge/grafana-%23F46800.svg?style=for-the-badge&logo=grafana&logoColor=white)](https://grafana.com)
 [![Elasticsearch](https://img.shields.io/badge/elasticsearch-%230377CC.svg?style=for-the-badge&logo=elasticsearch&logoColor=white)](https://www.elastic.co/elasticsearch)
 ![Bash Script](https://img.shields.io/badge/bash_script-%23121011.svg?style=for-the-badge&logo=gnu-bash&logoColor=white)
+
+<h2 aligh="left">Оглавление</h2>
+
+1. [Список исполняемых файлов](#Описание-исполняемых-файлов)
+2. [Предварительные условия](#Предварительные-условия)
+3. [Проверка работоспособности](#Проверка-работоспособности)
+4. [Чек-лист выполнения](#Чек-лист-выполнения)
+
 <details>
 <summary><h3 align="left">Описание исполняемых файлов</h3></summary>
 
