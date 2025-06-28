@@ -1,6 +1,6 @@
 upstream backend {
-    server 192.168.68.55;  # apache1
-    server 192.168.68.57;  # apache2
+    server 192.168.XX.XX;  # apache1
+    server 192.168.XX.XX;  # apache2
 }
 
 server {
