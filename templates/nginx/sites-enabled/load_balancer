@@ -1,0 +1,16 @@
+upstream backend {
+    server 192.168.68.55;  # apache1
+    server 192.168.68.57;  # apache2
+}
+
+server {
+    listen 80;             # Прослушиваем порт 80
+    server_name _;         # Обработка запросов на любой домен
+
+    location / {
+        proxy_pass http://backend;                     # Передаём запросы на upstream backend
+        proxy_set_header Host $host;                  # Передача оригинального заголовка Host
+        proxy_set_header X-Real-IP $remote_addr;      # Передача реального IP клиента
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; # Передача цепочки IP прокси
+    }
+}
