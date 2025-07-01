@@ -4,7 +4,7 @@ network:
   ethernets:
     enp0s3:
       dhcp4: no
-      addresses: [192.168.XX.XX/22]
+      addresses: [192.168.XX.60/22]
       gateway4: 192.168.XX.1
       nameservers:
         addresses: [8.8.8.8, 1.1.1.1]
