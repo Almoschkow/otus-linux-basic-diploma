@@ -26,6 +26,15 @@ xpack.security.transport.ssl.enabled: false
 xpack.security.http.ssl.enabled: false
 EOF
 
+### === JVM Options ===
+echo "[+] Установка лимита памяти для Elasticsearch (1 ГБ)..."
+sudo mkdir -p /etc/elasticsearch/jvm.options.d
+
+sudo tee /etc/elasticsearch/jvm.options.d/jvm.options > /dev/null <<EOF
+-Xms1g
+-Xmx1g
+EOF
+
 sudo systemctl daemon-reexec
 sudo systemctl enable elasticsearch
 sudo systemctl restart elasticsearch
