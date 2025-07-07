@@ -7,7 +7,7 @@ DNS1="8.8.8.8"
 DNS2="1.1.1.1"
 NETPLAN_FILE="/etc/netplan/01-netcfg.yaml"
 
-echo "[+] Создание Netplan-конфига для nginx"
+echo "Создание Netplan-конфига для nginx"
 sudo tee $NETPLAN_FILE > /dev/null <<EOF
 network:                # Корневой блок настройки сети
   version: 2            # Версия формата конфигурационного файла netplan (на данный момент используется 2)
@@ -30,5 +30,5 @@ echo "network: {config: disabled}" | sudo tee /etc/cloud/cloud.cfg.d/99-disable-
 
 sudo netplan apply
 
-echo "[✓] IP настроен:"
+echo "IP настроен:"
 ip a show $IFACE | grep inet

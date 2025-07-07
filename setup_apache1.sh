@@ -6,7 +6,7 @@ systemctl enable apache2
 systemctl start apache2
 
 # Создаём простой index.html с указанием имени сервера
-echo "Создаём тестовую страницу..."
+echo "Создаём тестовую страницу"
 cat > /var/www/html/index.html <<EOF
 <html>
   <head>
