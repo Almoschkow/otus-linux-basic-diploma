@@ -25,7 +25,7 @@ cp /etc/mysql/mysql.conf.d/cysqld.cnf /etc/mysql/mysql.conf.d/cysqld.cnf.bak
 sudo sed -i '/^\s*bind-address\s*=/d' $MYSQL_CNF      # Удаляет строку bind-address (если есть)
 sudo sed -i '/^\s*server-id\s*=/d' $MYSQL_CNF          # Удаляет строку server-id
 sudo sed -i '/^\s*log_bin\s*=/d' $MYSQL_CNF         # Удаляет строку log_bin
-sudo sed -i '/^\s*binlog_do_db\s*=/d' $MYSQL_CNF      # Удаляет строку binlog_do_db
+# sudo sed -i '/^\s*binlog_do_db\s*=/d' $MYSQL_CNF      # Удаляет строку binlog_do_db
 
 # Добавляем новые настройки репликации в конфигурационный файл
 sudo tee -a $MYSQL_CNF > /dev/null <<EOF
@@ -33,7 +33,7 @@ sudo tee -a $MYSQL_CNF > /dev/null <<EOF
 bind-address = 0.0.0.0               # Разрешаем подключения к MySQL по всем интерфейсам
 server-id = 1                        # Уникальный ID для мастера
 log_bin = mysql-bin                 # Включаем бинарные логи
-binlog_do_db = $TEST_DB             # Логируем изменения только для указанной базы
+# binlog_do_db = $TEST_DB             # Логируем изменения только для указанной базы
 EOF
 
 sudo systemctl restart mysql
