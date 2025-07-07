@@ -1,5 +1,12 @@
 #!/bin/bash
 
+set -e  # Прерываем скрипт при ошибке
+
+echo "Проверка установки apache2"
+if ! dpkg -s apache2 &>/dev/null; then
+  echo "Пакет apache2 не установлен. Установите его через: sudo apt install apache2"
+  exit 1
+fi
 
 # Включаем автозапуск и запускаем сервис
 systemctl enable apache2
