@@ -166,5 +166,5 @@ else
   echo "[!] Logstash не запущен. Проверьте журнал: journalctl -u logstash"
 fi
 
-# echo "[OK] ELK-стек настроен. Перейдите в Kibana: http://$HOST_IP:5601"
-echo "[OK] ELK-стек настроен. Перейдите в Kibana: http://192.168.56.107:5601"
+echo "[OK] ELK-стек настроен. Перейдите в Kibana: http://$HOST_IP:5601"
+# echo "[OK] ELK-стек настроен. Перейдите в Kibana: http://192.168.56.107:5601"

@@ -11,7 +11,7 @@ if ! dpkg -s filebeat &>/dev/null; then
 fi
 
 # Определяем IP Logstash-хоста
-LOGSTASH_IP="192.168.56.107"
+LOGSTASH_IP="192.168.68.61"
 
 # Проверяем наличие filebeat.yml
 if [ ! -f /etc/filebeat/filebeat.yml ]; then

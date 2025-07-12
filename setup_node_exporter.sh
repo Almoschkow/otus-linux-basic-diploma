@@ -21,8 +21,8 @@ else
 fi
 
 # Получаем IP-адрес, не включая loopback и docker-интерфейсы
-# HOST_IP=$(ip -o -4 addr show scope global | awk '{print $4}' | cut -d/ -f1 | head -n1)
+HOST_IP=$(ip -o -4 addr show scope global | awk '{print $4}' | cut -d/ -f1 | head -n1)
 
 echo "[OK] node_exporter успешно запущен!"
-# echo "Метрики доступны по адресу: http://${HOST_IP}:9100/metrics"
-echo "Метрики доступны по адресу: http://192.168.56.102:9100/metrics"
+echo "Метрики доступны по адресу: http://${HOST_IP}:9100/metrics"
+# echo "Метрики доступны по адресу: http://192.168.56.102:9100/metrics"

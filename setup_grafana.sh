@@ -15,7 +15,7 @@ sudo systemctl start grafana-server
 sleep 5
 
 # Определяем IP текущей машины
-# HOST_IP=$(ip -o -4 addr show scope global | awk '{print $4}' | cut -d/ -f1 | head -n1)
+HOST_IP=$(ip -o -4 addr show scope global | awk '{print $4}' | cut -d/ -f1 | head -n1)
 
 # echo "Настройка источника данных Prometheus"
 # curl -s -X POST http://admin:admin@localhost:3000/api/datasources \
@@ -47,6 +47,6 @@ sleep 5
 #   }' > /dev/null || echo "Дашборд уже существует или возникла ошибка при импорте."
 
 
-# echo [OK] Grafana запущена: http://${HOST_IP}:3000"
-echo "[OK] Grafana запущена: http://192.168.56.106:3000"
+echo [OK] Grafana запущена: http://${HOST_IP}:3000"
+# echo "[OK] Grafana запущена: http://192.168.56.106:3000"
 # echo "Дашборд node_exporter (ID 11074) импортирован."
