@@ -4,7 +4,7 @@ set -e
 
 echo "Проверка установки mysql-server-8.0"
 if ! dpkg -s mysql-server-8.0 &>/dev/null; then
-  echo "Пакет mysql-server-8.0 не установлен. Установите его через: sudo apt install mysql-server-8.0"
+  echo "ERROR: Пакет mysql-server-8.0 не установлен. Установите его через: sudo apt install mysql-server-8.0"
   exit 1
 fi
 
@@ -12,7 +12,7 @@ fi
 REPL_USER="repluser"
 REPL_PASSWORD="replpass"
 REPL_INFO_FILE="/tmp/repl_info.txt"
-MASTER_HOST="192.168.68.58"  # Замените на фактический IP master-сервера
+MASTER_HOST="192.168.68.58"
 MYSQL_CNF="/etc/mysql/mysql.conf.d/mysqld.cnf"
 
 echo "Настройка MySQL slave"
@@ -43,7 +43,7 @@ sudo systemctl restart mysql
 
 # Считываем параметры из файла, полученного от master
 if [[ ! -f "$REPL_INFO_FILE" ]]; then
-  echo "[!] Файл $REPL_INFO_FILE не найден. Убедитесь, что он скопирован со master."
+  echo "ERROR: Файл $REPL_INFO_FILE не найден. Убедитесь, что он скопирован со master."
   exit 1
 fi
 
@@ -67,9 +67,9 @@ SLAVE_IO=$(mysql -u root -e "SHOW SLAVE STATUS\G" | grep 'Slave_IO_Running:' | a
 SLAVE_SQL=$(mysql -u root -e "SHOW SLAVE STATUS\G" | grep 'Slave_SQL_Running:' | awk '{print $2}')
 
 if [[ "$SLAVE_IO" == "Yes" && "$SLAVE_SQL" == "Yes" ]]; then
-  echo "[OK] Репликация настроена успешно. Slave_IO и Slave_SQL работают."
+  echo "DONE:Репликация настроена успешно. Slave_IO и Slave_SQL работают."
 else
-  echo "[!] Внимание: Репликация не работает должным образом."
+  echo "ERROR: Внимание: Репликация не работает должным образом."
   echo "    Slave_IO_Running: $SLAVE_IO"
   echo "    Slave_SQL_Running: $SLAVE_SQL"
   echo "Полный статус репликации:"

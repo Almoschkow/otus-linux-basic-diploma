@@ -6,7 +6,7 @@ set -e # Прерываем скрипт при ошибке
 
 echo "Проверка установки filebeat"
 if ! dpkg -s filebeat &>/dev/null; then
-  echo "Пакет filebeat не установлен. Установите его через: sudo apt install filebeat"
+  echo "ERROR: Пакет filebeat не установлен. Установите его через: sudo apt install filebeat"
   exit 1
 fi
 
@@ -15,7 +15,7 @@ LOGSTASH_IP="192.168.68.61"
 
 # Проверяем наличие filebeat.yml
 if [ ! -f /etc/filebeat/filebeat.yml ]; then
-  echo "[!] Конфигурационный файл /etc/filebeat/filebeat.yml не найден."
+  echo "ERROR: Конфигурационный файл /etc/filebeat/filebeat.yml не найден."
   exit 1
 fi
 
@@ -59,7 +59,7 @@ sleep 3
 
 # Проверка
 if systemctl is-active --quiet filebeat; then
-  echo "[OK] Filebeat работает и отправляет логи на $LOGSTASH_IP:5400"
+  echo "DONE: Filebeat работает и отправляет логи на $LOGSTASH_IP:5400"
 else
-  echo "[!] Filebeat не запущен. Проверьте журнал: journalctl -u filebeat"
+  echo "ERROR: Filebeat не запущен. Проверьте журнал: journalctl -u filebeat"
 fi

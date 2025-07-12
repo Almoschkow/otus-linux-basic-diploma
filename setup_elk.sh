@@ -6,24 +6,24 @@ set -e  # Прерываем скрипт при ошибке
 
 echo "Проверка установки elasticsearch"
 if ! dpkg -s elasticsearch &>/dev/null; then
-  echo "Пакет elasticsearch не установлен. Установите его через: sudo apt install elasticsearch"
+  echo "ERROR: Пакет elasticsearch не установлен. Установите его через: sudo apt install elasticsearch"
   exit 1
 fi
 
 echo "Проверка установки logstash"
 if ! dpkg -s logstash &>/dev/null; then
-  echo "Пакет logstash не установлен. Установите его через: sudo apt install logstash"
+  echo "ERROR: Пакет logstash не установлен. Установите его через: sudo apt install logstash"
   exit 1
 fi
 
 echo "Проверка установки kibana"
 if ! dpkg -s kibana &>/dev/null; then
-  echo "Пакет kibana не установлен. Установите его через: sudo apt install kibana"
+  echo "ERROR: Пакет kibana не установлен. Установите его через: sudo apt install kibana"
   exit 1
 fi
 
 # Определим IP-адрес хоста
-# HOST_IP=$(ip -o -4 addr show scope global | awk '{print $4}' | cut -d/ -f1 | head -n1)
+HOST_IP=$(ip -o -4 addr show scope global | awk '{print $4}' | cut -d/ -f1 | head -n1)
 
 ### Elasticsearch
 echo "Настройка Elasticsearch"
@@ -65,10 +65,9 @@ sleep 5
 
 # Проверка Elasticsearch
 if curl -s http://localhost:9200 >/dev/null; then
-  # echo "Elasticsearch работает на http://$HOST_IP:9200" 
-  echo "[OK] Elasticsearch работает на http://192.168.56.107:9200"
+  echo "DONE: Elasticsearch работает на http://$HOST_IP:9200" 
 else
-  echo "[!] Elasticsearch не отвечает. Проверьте журнал: journalctl -u elasticsearch"
+  echo "ERROR: Elasticsearch не отвечает. Проверьте журнал: journalctl -u elasticsearch"
 fi
 
 ### Kibana
@@ -100,10 +99,9 @@ sudo systemctl restart kibana
 sleep 5
 
 if curl -s http://localhost:5601 >/dev/null; then
-  # echo "[OK] Kibana работает на http://$HOST_IP:5601"
-  echo "[OK] Kibana работает на http://192.168.56.107:5601"
+  echo "DONE: Kibana работает на http://$HOST_IP:5601"
 else
-  echo "[!] Kibana не отвечает. Проверьте журнал: journalctl -u kibana"
+  echo "ERROR: Kibana не отвечает. Проверьте журнал: journalctl -u kibana"
 fi
 
 ### Logstash
@@ -161,10 +159,10 @@ sudo systemctl restart logstash
 
 # Проверка состояния Logstash
 if systemctl is-active --quiet logstash; then
-  echo "[OK] Logstash настроен и работает. Слушает порт 5400 для логов от Filebeat"
+  echo "DONE: Logstash настроен и работает. Слушает порт 5400 для логов от Filebeat"
 else
-  echo "[!] Logstash не запущен. Проверьте журнал: journalctl -u logstash"
+  echo "ERROR: Logstash не запущен. Проверьте журнал: journalctl -u logstash"
 fi
 
-echo "[OK] ELK-стек настроен. Перейдите в Kibana: http://$HOST_IP:5601"
-# echo "[OK] ELK-стек настроен. Перейдите в Kibana: http://192.168.56.107:5601"
+echo "DONE: ELK-стек настроен. Перейдите в Kibana: http://$HOST_IP:5601"
+

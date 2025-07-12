@@ -32,13 +32,13 @@ echo "Создаём архив бэкапа: $ARCHIVE_NAME"
 # -f — указать имя файла архива
 tar -czvf "$TMP_DIR/$ARCHIVE_NAME" -C "$TMP_DIR" .
 
-echo "[+] Копируем архив и файл позиции в папку backups репозитория"
+echo "Копируем архив и файл позиции в папку backups репозитория"
 
 mkdir -p "$GIT_REPO_DIR/$BACKUPS_DIR"
 cp "$TMP_DIR/$ARCHIVE_NAME" "$GIT_REPO_DIR/$BACKUPS_DIR/"
 cp "$TMP_DIR/$POSITION_FILE" "$GIT_REPO_DIR/$BACKUPS_DIR/"
 
-echo "Резервная копия успешно создана в $GIT_REPO_DIR/$BACKUPS_DIR/"
+echo "DONE: Резервная копия успешно создана в $GIT_REPO_DIR/$BACKUPS_DIR/"
 
 # --- Блок для коммитов и пуша в git ---
 
@@ -49,4 +49,4 @@ echo "Резервная копия успешно создана в $GIT_REPO_D
 #git push origin main
 #GITBLOCK
 
-echo "[*] Скрипт завершён."
+echo "Скрипт завершён."

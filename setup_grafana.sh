@@ -4,7 +4,7 @@ set -e
 
 echo "Проверка установки grafana"
 if ! dpkg -s grafana &>/dev/null; then
-  echo "Пакет grafana не установлен. Установите его через: sudo apt install grafana"
+  echo "ERROR: Пакет grafana не установлен. Установите его через: sudo apt install grafana"
   exit 1
 fi
 
@@ -47,6 +47,5 @@ HOST_IP=$(ip -o -4 addr show scope global | awk '{print $4}' | cut -d/ -f1 | hea
 #   }' > /dev/null || echo "Дашборд уже существует или возникла ошибка при импорте."
 
 
-echo [OK] Grafana запущена: http://${HOST_IP}:3000"
-# echo "[OK] Grafana запущена: http://192.168.56.106:3000"
+echo "DONE: Grafana запущена: http://${HOST_IP}:3000"
 # echo "Дашборд node_exporter (ID 11074) импортирован."

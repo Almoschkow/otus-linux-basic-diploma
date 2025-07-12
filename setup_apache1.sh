@@ -4,7 +4,7 @@ set -e  # Прерываем скрипт при ошибке
 
 echo "Проверка установки apache2"
 if ! dpkg -s apache2 &>/dev/null; then
-  echo "Пакет apache2 не установлен. Установите его через: sudo apt install apache2"
+  echo "ERROR: Пакет apache2 не установлен. Установите его через: sudo apt install apache2"
   exit 1
 fi
 
@@ -26,6 +26,6 @@ cat > /var/www/html/index.html <<EOF
 EOF
 
 # Открываем порт 80 в iptables
-iptables -C INPUT -p tcp --dport 80 -j ACCEPT 2>/dev/null || iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+# iptables -C INPUT -p tcp --dport 80 -j ACCEPT 2>/dev/null || iptables -A INPUT -p tcp --dport 80 -j ACCEPT
 
-echo "Apache установлен, страница создана, порт 80 открыт."
+echo "DONE: Apache установлен, страница создана, порт 80 открыт."

@@ -30,5 +30,5 @@ echo "network: {config: disabled}" | sudo tee /etc/cloud/cloud.cfg.d/99-disable-
 
 sudo netplan apply
 
-echo "IP настроен:"
+echo "DONE: IP настроен:"
 ip a show $IFACE | grep inet

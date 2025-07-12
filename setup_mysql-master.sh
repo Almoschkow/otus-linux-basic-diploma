@@ -4,7 +4,7 @@ set -e
 
 echo "Проверка установки mysql-server-8.0"
 if ! dpkg -s mysql-server-8.0 &>/dev/null; then
-  echo "Пакет mysql-server-8.0 не установлен. Установите его через: sudo apt install mysql-server-8.0"
+  echo "ERROR: Пакет mysql-server-8.0 не установлен. Установите его через: sudo apt install mysql-server-8.0"
   exit 1
 fi
 
@@ -66,20 +66,20 @@ echo "MASTER_LOG_POS=$MASTER_LOG_POS" >> $REPL_INFO_FILE
 
 # Проверка, что файл создан и содержит данные
 if [[ ! -f "$REPL_INFO_FILE" ]]; then
-  echo "[!] Ошибка: файл $REPL_INFO_FILE не создан."
+  echo "ERROR: файл $REPL_INFO_FILE не создан."
   exit 1
 fi
 
 # Проверка, что переменные внутри файла непустые
 source $REPL_INFO_FILE
 if [[ -z "$MASTER_LOG_FILE" || -z "$MASTER_LOG_POS" ]]; then
-  echo "[!] Ошибка: файл $REPL_INFO_FILE пустой или содержит неверные данные."
+  echo "ERROR: Ошибка: файл $REPL_INFO_FILE пустой или содержит неверные данные."
   exit 1
 fi
 
-echo "[OK] Файл с информацией о репликации успешно создан и валиден."
+echo "DONE: Файл с информацией о репликации успешно создан и валиден."
 
-echo "[OK] Настройка master завершена, информация для slave записана в $REPL_INFO_FILE"
+echo "DONE: Настройка master завершена, информация для slave записана в $REPL_INFO_FILE"
 
 # Автоматическое копирование файла с master на slave
 
@@ -89,5 +89,5 @@ REMOTE_PATH="/tmp/"      # Куда копировать
 
 echo "Копирование информации о репликации на slave ($SLAVE_HOST)..."
 scp $REPL_INFO_FILE "$SLAVE_USER@$SLAVE_HOST:$REMOTE_PATH" && \
-echo "[OK] repl_info.txt успешно скопирован на $SLAVE_HOST:$REMOTE_PATH" || \
-echo "[!] Ошибка при копировании файла на slave. Проверьте SSH доступ."
+echo "DONE: repl_info.txt успешно скопирован на $SLAVE_HOST:$REMOTE_PATH" || \
+echo "ERROR: Ошибка при копировании файла на slave. Проверьте SSH доступ."

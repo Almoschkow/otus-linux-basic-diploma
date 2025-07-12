@@ -3,7 +3,7 @@ set -e  # Прерываем выполнение при ошибке
 
 echo "Проверка установки prometheus"
 if ! dpkg -s prometheus &>/dev/null; then
-  echo "Пакет prometheus не установлен. Установите его через: sudo apt install prometheus"
+  echo "ERROR: Пакет prometheus не установлен. Установите его через: sudo apt install prometheus"
   exit 1
 fi
 
@@ -32,9 +32,8 @@ sudo systemctl restart prometheus
 sudo systemctl enable prometheus
 
 # Определение IP-адреса для справочного вывода
-# HOST_IP=$(ip -o -4 addr show scope global | awk '{print $4}' | cut -d/ -f1 | head -n1)
+HOST_IP=$(ip -o -4 addr show scope global | awk '{print $4}' | cut -d/ -f1 | head -n1)
 
-echo "[OK] Prometheus настроен и запущен"
-# echo "Интерфейс доступен по адресу: http://$HOST_IP:9090"
-echo "Интерфейс доступен по адресу: http://192.168.56.106:9090"
+echo "DONE: Prometheus настроен и запущен"
+echo "Интерфейс доступен по адресу: http://$HOST_IP:9090"
 echo "Проверьте статус: sudo systemctl status prometheus"
