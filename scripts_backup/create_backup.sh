@@ -1,52 +1,59 @@
 #!/bin/bash
 
 # Переменные
-REPL_USER="repluser"
-REPL_PASSWORD="replpass"
-TEST_DB="test_repl"
-DATE=$(date +"%Y-%m-%d_%H-%M-%S")
-TMP_DIR="/tmp/${TEST_DB}_backup_${DATE}"
+BACKUP_DIR="/var/backups/mysql"
+DATE=$(date +%F_%H-%M-%S)
+TEST_DB="test_repl_final"
+REPL_INFO_FILE="/tmp/repl_info.txt"
 ARCHIVE_NAME="${TEST_DB}_backup_${DATE}.tar.gz"
-POSITION_FILE="repl_position.txt"
 GIT_REPO_DIR="/home/amoshkov/otus-linux-basic-diploma"
-BACKUPS_DIR="backups"
+GIT_BACKUPS_DIR="$GIT_REPO_DIR/backups"
 
-echo "Создаём временную директорию для бэкапа: $TMP_DIR"
-mkdir -p "$TMP_DIR"
+# Создаем директорию для бэкапа
+mkdir -p "$BACKUP_DIR"
+TMP_DIR=$(mktemp -d)
 
-echo "Делаем потабличный дамп базы данных '$TEST_DB' с помощью mysqldump --tab"
-# Ключи:
-# --tab=DIR  — сохраняет дампы каждой таблицы в отдельные файлы в указанной папке (структура: .sql и .txt для данных)
-# --user, --password — аутентификация
-mysqldump -u "$REPL_USER" -p"$REPL_PASSWORD" --tab="$TMP_DIR" "$TEST_DB"
+echo "Создаем потабличный дамп базы $TEST_DB"
 
-echo "Получаем текущую позицию бинарного лога для репликации"
-# Записываем имя текущего бинарного лога и позицию в файл repl_position.txt
-mysql -u "$REPL_USER" -p"$REPL_PASSWORD" -e "SHOW MASTER STATUS\G" | grep -E "File|Position" | awk '{print $1 "=" $2}' > "$TMP_DIR/$POSITION_FILE"
+# Получаем список таблиц из базы
+TABLES=$(mysql -u root -N -e "SHOW TABLES FROM $TEST_DB;")
 
-echo "Создаём архив бэкапа: $ARCHIVE_NAME"
-# Ключи tar:
-# -c — создать архив
-# -v — показать имена файлов при архивировании (verbose)
-# -z — сжать архив с помощью gzip
-# -f — указать имя файла архива
-tar -czvf "$TMP_DIR/$ARCHIVE_NAME" -C "$TMP_DIR" .
+for TABLE in $TABLES; do
+  echo "Дампим таблицу $TABLE"
+  mysqldump -u root --skip-lock-tables --single-transaction --quick --lock-tables=false $TEST_DB $TABLE > "$TMP_DIR/${TABLE}.sql"
+done
 
-echo "Копируем архив и файл позиции в папку backups репозитория"
+# Получаем текущую позицию бинарного лога для восстановления репликации
+MASTER_LOG_FILE=$(mysql -u root -e "SHOW SLAVE STATUS\G" | grep Relay_Master_Log_File | awk '{print $2}')
+MASTER_LOG_POS=$(mysql -u root -e "SHOW SLAVE STATUS\G" | grep Exec_Master_Log_Pos | awk '{print $2}')
 
-mkdir -p "$GIT_REPO_DIR/$BACKUPS_DIR"
-cp "$TMP_DIR/$ARCHIVE_NAME" "$GIT_REPO_DIR/$BACKUPS_DIR/"
-cp "$TMP_DIR/$POSITION_FILE" "$GIT_REPO_DIR/$BACKUPS_DIR/"
+echo "Записываем позицию бинарного лога в файл"
+cat > "$TMP_DIR/repl_position.txt" <<EOF
+MASTER_LOG_FILE=$MASTER_LOG_FILE
+MASTER_LOG_POS=$MASTER_LOG_POS
+EOF
 
-echo "DONE: Резервная копия успешно создана в $GIT_REPO_DIR/$BACKUPS_DIR/"
+# Архивируем дампы и файл с позицией
+echo "Архивируем бэкап"
+tar czf "$BACKUP_DIR/$ARCHIVE_NAME" -C "$TMP_DIR" .
 
-# --- Блок для коммитов и пуша в git ---
+# Копируем архив в git-репозиторий
+mkdir -p "$GIT_BACKUPS_DIR"
+cp "$BACKUP_DIR/$ARCHIVE_NAME" "$GIT_BACKUPS_DIR/"
+cp "$TMP_DIR/repl_position.txt" "$GIT_BACKUPS_DIR/repl_position_${DATE}.txt"
 
-#: <<'GITBLOCK'
-#cd "$GIT_REPO_DIR" || { echo "[!] Ошибка: не могу перейти в директорию репозитория"; exit 1; }
-#git add "$BACKUPS_DIR/$ARCHIVE_NAME" "$BACKUPS_DIR/$POSITION_FILE"
-#git commit -m "Backup DB slave and replication position on $DATE"
-#git push origin main
-#GITBLOCK
+# Удаляем временную папку
+rm -rf "$TMP_DIR"
 
-echo "Скрипт завершён."
+echo "DONE: Бекап базы $TEST_DB создан: $BACKUP_DIR/$ARCHIVE_NAME"
+echo "Позиция бинарного лога:"
+echo "  MASTER_LOG_FILE=$MASTER_LOG_FILE"
+echo "  MASTER_LOG_POS=$MASTER_LOG_POS"
+
+# --- Блок для коммита и пуша в git ---
+cd "$GIT_REPO_DIR" || { echo "ERROR: Не могу перейти в директорию репозитория"; exit 1; }
+git add "backups/$ARCHIVE_NAME" "backups/repl_position_${DATE}.txt"
+git commit -m "Backup $TEST_DB on $DATE"
+git push origin main
+
+echo "DONE: Бэкап отправлен в git-репозиторий ($GIT_REPO_DIR/backups/)"
