@@ -1,9 +1,9 @@
 #!/bin/bash
 
-set -e
+set -e # прерываем при ошибке
 
 echo "Проверка установки nginx"
-if ! dpkg -s nginx &>/dev/null; then
+if ! dpkg -s nginx &>/dev/null; then # &> stout и stderr сбрасываем "вникуда"
   echo "ERROR: Пакет nginx не установлен. Установите его через: sudo apt install nginx"
   exit 1
 fi
@@ -54,6 +54,6 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "Перезапускаем nginx для применения новой конфигурации"
-systemctl restart nginx
+systemctl reload nginx 
 
 echo "DONE: nginx успешно перезапущен и готов к работе."

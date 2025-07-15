@@ -5,10 +5,10 @@
 set -e # Прерываем скрипт при ошибке
 
 echo "Проверка установки filebeat"
-if ! dpkg -s filebeat &>/dev/null; then
+if ! dpkg -s filebeat &>/dev/null; then # &> stout и stderr сбрасываем "вникуда"
   echo "ERROR: Пакет filebeat не установлен. Установите его через: sudo apt install filebeat"
   exit 1
-fi
+fi 
 
 # Определяем IP Logstash-хоста
 LOGSTASH_IP="192.168.68.61"
@@ -20,7 +20,7 @@ if [ ! -f /etc/filebeat/filebeat.yml ]; then
 fi
 
 # Создаем резервную копию оригинального файла
-cp /etc/filebeat/filebeat.yml /etc/filebeat/filebeat.yml.bak
+sudo cp /etc/filebeat/filebeat.yml /etc/filebeat/filebeat.yml.bak
 
 # Обновим конфигурацию filebeat.yml
 cat > /etc/filebeat/filebeat.yml <<EOF

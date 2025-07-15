@@ -10,7 +10,7 @@ fi
 echo "Установка и настройка Prometheus"
 
 # Создаем резервную копию оригинального файла
-cp /etc/prometheus/prometheus.yml /etc/prometheus/prometheus.yml.bak
+sudo cp /etc/prometheus/prometheus.yml /etc/prometheus/prometheus.yml.bak 
 
 # Создаём базовую конфигурацию Prometheus
 sudo tee /etc/prometheus/prometheus.yml > /dev/null <<EOF
@@ -19,12 +19,12 @@ global:
   evaluation_interval: 15s
 
 scrape_configs:
-  - job_name: 'node_exporters'
+  - job_name: 'node_exporter'
     static_configs:
       - targets:
-          - '192.168.56.102:9100'  # nginx
-          - '192.168.56.103:9100'  # apache1
-          - '192.168.56.104:9100'  # apache2
+          - '192.168.68.53:9100'  # nginx
+          - '192.168.68.55:9100'  # apache1
+          - '192.168.68.57:9100'  # apache2
 EOF
 
 echo "Перезапуск Prometheus с новой конфигурацией"

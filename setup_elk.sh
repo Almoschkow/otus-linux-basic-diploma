@@ -28,7 +28,7 @@ HOST_IP=$(ip -o -4 addr show scope global | awk '{print $4}' | cut -d/ -f1 | hea
 ### Elasticsearch
 echo "Настройка Elasticsearch"
 # Создаем резервную копию оригинального файла
-cp /etc/elasticsearch/elasticsearch.yml /etc/elasticsearch/elasticsearch.yml.bak
+sudo cp /etc/elasticsearch/elasticsearch.yml /etc/elasticsearch/elasticsearch.yml.bak
 
 sudo tee /etc/elasticsearch/elasticsearch.yml > /dev/null <<EOF
 http.host: 0.0.0.0
@@ -58,7 +58,7 @@ sudo tee /etc/elasticsearch/jvm.options.d/jvm.options > /dev/null <<EOF
 -Xmx1g
 EOF
 
-sudo systemctl daemon-reexec
+sudo systemctl daemon-reload
 sudo systemctl enable elasticsearch
 sudo systemctl restart elasticsearch
 sleep 5
@@ -74,7 +74,7 @@ fi
 
 echo "Настройка Kibana"
 # Создаем резервную копию оригинального файла
-cp /etc/kibana/kibana.yml /etc/kibana/kibana.yml.bak
+sudo cp /etc/kibana/kibana.yml /etc/kibana/kibana.yml.bak
 
 sudo tee /etc/kibana/kibana.yml > /dev/null <<EOF
 server.port: 5601
@@ -107,7 +107,7 @@ fi
 ### Logstash
 echo "Настройка Logstash"
 # Создаем резервную копию оригинального файла
-cp /etc/logstash/logstash.yml /etc/logstash/logstash.yml.bak
+sudo cp /etc/logstash/logstash.yml /etc/logstash/logstash.yml.bak
 
 sudo mkdir -p /etc/logstash/conf.d
 

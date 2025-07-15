@@ -18,14 +18,14 @@ MYSQL_CNF="/etc/mysql/mysql.conf.d/mysqld.cnf"
 echo "Настройка MySQL slave"
 
 # Создаем резервную копию оригинального файла
-cp /etc/mysql/mysql.conf.d/cysqld.cnf /etc/mysql/mysql.conf.d/cysqld.cnf.bak
+sudo cp /etc/mysql/mysql.conf.d/mysqld.cnf /etc/mysql/mysql.conf.d/mysqld.cnf.bak
 
 # Удаляем старые настройки (если повторный запуск)
 sudo sed -i '/^bind-address/d' $MYSQL_CNF
 sudo sed -i '/^server-id/d' $MYSQL_CNF
 sudo sed -i '/^relay-log/d' $MYSQL_CNF
 sudo sed -i '/^log_bin/d' $MYSQL_CNF
-sudo sed -i '/^binlog_do_db/d' $MYSQL_CNF
+# sudo sed -i '/^binlog_do_db/d' $MYSQL_CNF
 sudo sed -i '/^binlog_ignore_db/d' $MYSQL_CNF
 
 
@@ -51,7 +51,7 @@ fi
 source $REPL_INFO_FILE
 
 # Настраиваем параметры подключения к мастеру
-mysql -u root -e "
+sudo mysql -u root -e "
 STOP SLAVE;
 CHANGE MASTER TO
   MASTER_HOST='$MASTER_HOST',
@@ -63,8 +63,8 @@ START SLAVE;
 "
 
 # Проверка статуса репликации
-SLAVE_IO=$(mysql -u root -e "SHOW SLAVE STATUS\G" | grep 'Slave_IO_Running:' | awk '{print $2}')
-SLAVE_SQL=$(mysql -u root -e "SHOW SLAVE STATUS\G" | grep 'Slave_SQL_Running:' | awk '{print $2}')
+SLAVE_IO=$(sudo mysql -u root -e "SHOW SLAVE STATUS\G" | grep 'Slave_IO_Running:' | awk '{print $2}')
+SLAVE_SQL=$(sudo mysql -u root -e "SHOW SLAVE STATUS\G" | grep 'Slave_SQL_Running:' | awk '{print $2}')
 
 if [[ "$SLAVE_IO" == "Yes" && "$SLAVE_SQL" == "Yes" ]]; then
   echo "DONE:Репликация настроена успешно. Slave_IO и Slave_SQL работают."
@@ -73,5 +73,5 @@ else
   echo "    Slave_IO_Running: $SLAVE_IO"
   echo "    Slave_SQL_Running: $SLAVE_SQL"
   echo "Полный статус репликации:"
-  mysql -u root -e "SHOW SLAVE STATUS\G"
+  sudo mysql -u root -e "SHOW SLAVE STATUS\G"
 fi

@@ -18,7 +18,7 @@ MYSQL_CNF="/etc/mysql/mysql.conf.d/mysqld.cnf"
 echo "Настройка MySQL master"
 
 # Создаем резервную копию оригинального файла
-cp /etc/mysql/mysql.conf.d/cysqld.cnf /etc/mysql/mysql.conf.d/cysqld.cnf.bak
+sudo cp /etc/mysql/mysql.conf.d/mysqld.cnf /etc/mysql/mysql.conf.d/mysqld.cnf.bak
 
 # Удаляем возможные старые конфигурационные строки из файла my.cnf,
 # чтобы избежать дублирования и конфликтов при повторном запуске скрипта
@@ -33,8 +33,9 @@ sudo tee -a $MYSQL_CNF > /dev/null <<EOF
 bind-address = 0.0.0.0               # Разрешаем подключения к MySQL по всем интерфейсам
 server-id = 1                        # Уникальный ID для мастера
 log_bin = mysql-bin                 # Включаем бинарные логи
-# binlog_do_db = $TEST_DB             # Логируем изменения только для указанной базы
+
 EOF
+# binlog_do_db = $TEST_DB             # Логируем изменения только для указанной базы
 
 sudo systemctl restart mysql
 
@@ -46,7 +47,7 @@ FLUSH PRIVILEGES;
 "
 
 # Создаём тестовую базу данных и таблицу, если они не существуют
-mysql -u root -e "
+sudo mysql -u root -e "
 CREATE DATABASE IF NOT EXISTS $TEST_DB;
 USE $TEST_DB;
 CREATE TABLE IF NOT EXISTS test_table (
@@ -57,8 +58,8 @@ INSERT INTO test_table (msg) VALUES ('test');
 "
 
 # Получаем текущий бинарный лог и позицию для настройки slave-сервера
-MASTER_LOG_FILE=$(mysql -u root -e "SHOW MASTER STATUS\G" | grep File | awk '{print $2}')
-MASTER_LOG_POS=$(mysql -u root -e "SHOW MASTER STATUS\G" | grep Position | awk '{print $2}')
+MASTER_LOG_FILE=$(sudo mysql -u root -e "SHOW MASTER STATUS\G" | grep File | awk '{print $2}')
+MASTER_LOG_POS=$(sudo mysql -u root -e "SHOW MASTER STATUS\G" | grep Position | awk '{print $2}')
 
 # Сохраняем параметры репликации в файл, чтобы потом использовать на slave
 echo "MASTER_LOG_FILE=$MASTER_LOG_FILE" > $REPL_INFO_FILE
@@ -88,6 +89,6 @@ SLAVE_HOST="192.168.68.59"            # IP-адрес slave
 REMOTE_PATH="/tmp/"      # Куда копировать
 
 echo "Копирование информации о репликации на slave ($SLAVE_HOST)..."
-scp $REPL_INFO_FILE "$SLAVE_USER@$SLAVE_HOST:$REMOTE_PATH" && \
+sudo scp $REPL_INFO_FILE "$SLAVE_USER@$SLAVE_HOST:$REMOTE_PATH" && \
 echo "DONE: repl_info.txt успешно скопирован на $SLAVE_HOST:$REMOTE_PATH" || \
 echo "ERROR: Ошибка при копировании файла на slave. Проверьте SSH доступ."
