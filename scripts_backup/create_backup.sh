@@ -1,9 +1,11 @@
 #!/bin/bash
 
+set -e
+
 # Переменные
 BACKUP_DIR="/var/backups/mysql"
 DATE=$(date +%F_%H-%M-%S)
-TEST_DB="test_repl_final"
+TEST_DB="test_repl"
 REPL_INFO_FILE="/tmp/repl_info.txt"
 ARCHIVE_NAME="${TEST_DB}_backup_${DATE}.tar.gz"
 GIT_REPO_DIR="/home/amoshkov/otus-linux-basic-diploma"
@@ -16,16 +18,20 @@ TMP_DIR=$(mktemp -d)
 echo "Создаем потабличный дамп базы $TEST_DB"
 
 # Получаем список таблиц из базы
-TABLES=$(mysql -u root -N -e "SHOW TABLES FROM $TEST_DB;")
+TABLES=$(mysql -N -e "SHOW TABLES FROM $TEST_DB;")
+if [[ -z "$TABLES" ]]; then
+    echo "ERROR: Нет таблиц в базе $TEST_DB"
+    exit 1
+fi
 
 for TABLE in $TABLES; do
   echo "Дампим таблицу $TABLE"
-  mysqldump -u root --skip-lock-tables --single-transaction --quick --lock-tables=false $TEST_DB $TABLE > "$TMP_DIR/${TABLE}.sql"
+  mysqldump --skip-lock-tables --single-transaction --quick --lock-tables=false "$TEST_DB" "$TABLE" > "$TMP_DIR/${TABLE}.sql"
 done
 
 # Получаем текущую позицию бинарного лога для восстановления репликации
-MASTER_LOG_FILE=$(mysql -u root -e "SHOW SLAVE STATUS\G" | grep Relay_Master_Log_File | awk '{print $2}')
-MASTER_LOG_POS=$(mysql -u root -e "SHOW SLAVE STATUS\G" | grep Exec_Master_Log_Pos | awk '{print $2}')
+MASTER_LOG_FILE=$(mysql -e "SHOW SLAVE STATUS\G" | grep Relay_Master_Log_File | awk '{print $2}')
+MASTER_LOG_POS=$(mysql -e "SHOW SLAVE STATUS\G" | grep Exec_Master_Log_Pos | awk '{print $2}')
 
 echo "Записываем позицию бинарного лога в файл"
 cat > "$TMP_DIR/repl_position.txt" <<EOF
@@ -47,10 +53,10 @@ rm -rf "$TMP_DIR"
 
 echo "DONE: Бекап базы $TEST_DB создан: $BACKUP_DIR/$ARCHIVE_NAME"
 echo "Позиция бинарного лога:"
-echo "  MASTER_LOG_FILE=$MASTER_LOG_FILE"
-echo "  MASTER_LOG_POS=$MASTER_LOG_POS"
+echo "MASTER_LOG_FILE=$MASTER_LOG_FILE"
+echo "MASTER_LOG_POS=$MASTER_LOG_POS"
 
-# --- Блок для коммита и пуша в git ---
+# Гит блок
 cd "$GIT_REPO_DIR" || { echo "ERROR: Не могу перейти в директорию репозитория"; exit 1; }
 git add "backups/$ARCHIVE_NAME" "backups/repl_position_${DATE}.txt"
 git commit -m "Backup $TEST_DB on $DATE"
