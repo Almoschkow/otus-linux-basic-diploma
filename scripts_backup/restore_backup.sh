@@ -1,11 +1,21 @@
 #!/bin/bash
 
-set -e 
+set -e
+
+mysql -e "STOP REPLICA;"
+
 # Параметры
 REPO_DIR="/home/amoshkov/otus-linux-basic-diploma"
 BACKUPS_DIR="$REPO_DIR/backups"
-DB_NAME="test_repl_final"
+DB_NAME="test_repl"
 ARCHIVE_NAME="$1"
+
+# Остановка реплики
+mysql -e "STOP REPLICA;"
+
+# Пересоздание чисто DB
+mysql -e "DROP DATABASE IF EXISTS $DB_NAME;"
+mysql -e "CREATE DATABASE $DB_NAME;"
 
 if [ -z "$ARCHIVE_NAME" ]; then
     echo "Использование: $0 <имя_архива_бэкапа.tar.gz>"
