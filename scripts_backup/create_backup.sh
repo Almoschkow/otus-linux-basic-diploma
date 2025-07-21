@@ -62,4 +62,4 @@ git add "backups/$ARCHIVE_NAME" "backups/repl_position_${DATE}.txt"
 git commit -m "Backup $TEST_DB on $DATE"
 git push origin main
 
-echo "DONE: Бэкап отправлен в git-репозиторий ($GIT_REPO_DIR/backups/)"
+echo "DONE: Бекап отправлен в git-репозиторий ($GIT_REPO_DIR/backups/)"

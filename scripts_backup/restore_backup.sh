@@ -49,3 +49,38 @@ done
 
 rm -rf "$TMP_RESTORE"
 echo "DONE: Восстановление базы $DB_NAME завершено."
+
+# Восстановление репликации
+# Пути до файла позиций
+REPL_POS_FILE="$TMP_RESTORE/repl_position.txt"
+
+if [ -f "$REPL_POS_FILE" ]; then
+    source "$REPL_POS_FILE"
+    echo "Настраиваем репликацию на $MASTER_LOG_FILE:$MASTER_LOG_POS"
+
+    mysql -e "
+    CHANGE MASTER TO
+      MASTER_HOST='192.168.68.58',
+      MASTER_USER='repluser',
+      MASTER_PASSWORD='replpass',
+      MASTER_LOG_FILE='$MASTER_LOG_FILE',
+      MASTER_LOG_POS=$MASTER_LOG_POS;
+    START REPLICA;"
+fi
+
+sleep 5
+
+# Чек статуса репликации
+SLAVE_IO=$(mysql -Nse "SHOW SLAVE STATUS\G" | grep 'Slave_IO_Running:' | awk '{print $2}')
+SLAVE_SQL=$(mysql -Nse "SHOW SLAVE STATUS\G" | grep 'Slave_SQL_Running:' | awk '{print $2}')
+LAST_ERROR=$(mysql -Nse "SHOW SLAVE STATUS\G" | grep 'Last_SQL_Error:' | cut -d: -f2-)
+
+if [[ "$SLAVE_IO" == "Yes" && "$SLAVE_SQL" == "Yes" ]]; then
+    echo "DONE: Репликация запущена успешно"
+else
+    echo "ERROR: Репликация не стартовала"
+    echo "$LAST_ERROR"
+    echo "Статус репликации:"
+    mysql -e "SHOW SLAVE STATUS\G"
+    exit 1
+fi
