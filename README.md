@@ -51,17 +51,21 @@ create_restore.sh | Восстановление базы данных из ре
 <h3 align="left">Предварительные условия</h3>
 <h5 aligh="left">1. Предустановленные пакеты</h5>
   
-  * Хост Nginx: nginx, node_exporter, filebeat, git
-  * Хосты Apache: Apache2, node_exporter
-  * Хосты Mysql: mysql-server-8.0, git для slave
+  * Хост Nginx: nginx, node_exporter, filebeat, git, iptables-persistent
+  * Хосты Apache: Apache2, node_exporter, iptables-persistent
+  * Хосты Mysql: mysql-server-8.0, git для slave, iptables-persistent
   * Хост мониторинга: 
     * prometheus-2.46.0 
     * grafana_10.0.3
+    * iptables-persistent
+    * git
   * Хост ELK:
     * elasticsearch-8.9.1
     * kibana-8.9.1
     * logstash-8.9.1
     * default-jdk
+    * iptables-persistent
+    * git
   
   <h5 aligh="left">2. Требования к железу</h5>
   
