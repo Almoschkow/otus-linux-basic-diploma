@@ -53,7 +53,7 @@ create_restore.sh | Восстановление базы данных из ре
   
   * Хост Nginx: nginx, node_exporter, filebeat, git, iptables-persistent
   * Хосты Apache: Apache2, node_exporter, iptables-persistent
-  * Хосты Mysql: mysql-server-8.0, git для slave, iptables-persistent
+  * Хосты Mysql: mysql-server-8.0, git, iptables-persistent
   * Хост мониторинга: 
     * prometheus-2.46.0 
     * grafana_10.0.3
@@ -76,7 +76,7 @@ create_restore.sh | Восстановление базы данных из ре
   
   * [Веб-сервер](https://192.168.68.53)
   * [Prometheus](https://192.168.68.60:9090)
-  * [Prometheus](https://192.168.68.60:3000) 
+  * [Grafana](https://192.168.68.60:3000) 
   * [Kibana](https://192.168.68.60:5601) 
 
 <h3 aligh=left">Хосты и их IP адреса</h3>
