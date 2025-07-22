@@ -70,10 +70,10 @@ create_restore.sh | Восстановление базы данных из ре
 
 <h3 align="left">Проверка работоспособности</h3>
   
-  * Веб-сервер: 
-  * Prometheus: 
-  * Grafana: 
-  * Elasticsearch:
+  * [Веб-сервер](https://192.168.68.53)
+  * [Prometheus](https://192.168.68.60:9090)
+  * [Prometheus](https://192.168.68.60:3000) 
+  * [Kibana](https://192.168.68.60:5601) 
 
 <h3 aligh=left">Хосты и их IP адреса</h3>
 
