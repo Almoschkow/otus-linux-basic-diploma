@@ -50,11 +50,11 @@ fi
 iptables-save > "$BACKUP_FILE"
 echo "DONE: Текущие правила сохранены в $BACKUP_FILE"
 
-# --- Базовые политики ---
+# Базовые политики
 iptables -P INPUT DROP
 iptables -P OUTPUT ACCEPT
 
-# --- Базовые разрешения ---
+# Базовые разрешения
 # Loopback
 iptables -C INPUT -i lo -j ACCEPT 2>/dev/null || \
 iptables -A INPUT -i lo -j ACCEPT -m comment --comment "Loopback (localhost)"
@@ -83,7 +83,7 @@ iptables -A OUTPUT -p udp --dport 53 -j ACCEPT -m comment --comment "DNS-зап�
 iptables -C OUTPUT -p tcp --dport 53 -j ACCEPT 2>/dev/null || \
 iptables -A OUTPUT -p tcp --dport 53 -j ACCEPT -m comment --comment "DNS-запросы (TCP 53)"
 
-# --- Разрешения по ролям ---
+# Разрешения по ролям
 case "$ROLE" in
   nginx)
     iptables -C INPUT -p tcp --dport 80 -j ACCEPT 2>/dev/null || \
@@ -126,6 +126,6 @@ esac
 
 echo "DONE: iptables правила применены для роли $ROLE"
 
-# --- Сохранение правил ---
+# Cохранение правил
 iptables-save > /etc/iptables/rules.v4
 echo "DONE: Текущие правила сохранены в /etc/iptables/rules.v4 для автозагрузки"
