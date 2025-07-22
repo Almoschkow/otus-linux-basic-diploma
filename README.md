@@ -70,7 +70,7 @@ create_restore.sh | Восстановление базы данных из ре
   <h5 aligh="left">2. Требования к железу</h5>
   
   * RAM: 2GB (4GB для кластера ELK)
-  * Space: 20GB
+  * Space: 20GB (40GB для кластера ELK)
 
 <h3 align="left">Проверка работоспособности</h3>
   
