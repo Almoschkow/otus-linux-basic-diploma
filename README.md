@@ -45,7 +45,7 @@ setup_filebeat.sh | Установка и настройка Filebeat на nginx
 setup_prometheus.sh |Установка и настройка prometheus на monitoring хосте
 setup_grafana.sh | Установка и настройка grafana на monitoring хосте
 create_backup.sh | Создание резервной копии базы данных и отправка в git-репозиторий
-create_restore.sh | Восстановление базы данных из резервной копии из git-репозитория
+restore_backup.sh | Восстановление базы данных из резервной копии из git-репозитория
 
 
 <h3 align="left">Предварительные условия</h3>
